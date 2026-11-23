@@ -31,8 +31,9 @@ The UI calls `/api/items`. Vite forwards those calls to the API on port 5080.
 
 | Method | Endpoint | What it does |
 |--------|----------|--------------|
-| GET | `/api/items` | List items, soonest expiry first, with `daysLeft` and `status` |
-| POST | `/api/items` | Add an item `{ name, quantity, expiryDate }` |
+| GET | `/api/items` | List items, soonest expiry first, with `category`, `daysLeft` and `status` |
+| POST | `/api/items` | Add an item `{ name, quantity, category, expiryDate }` |
 | DELETE | `/api/items/{id}` | Remove an item |
+| GET | `/api/categories` | List the categories to choose from (Dairy, Vegetables, Fruit, …) |
 
 Status rule (in `api/Models/FoodItem.cs`): `expired` if past its date, `soon` if 0–3 days left (shown in red), otherwise `fresh`.

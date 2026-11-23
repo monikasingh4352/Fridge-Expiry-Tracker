@@ -16,6 +16,10 @@ async function handle(response) {
   throw new Error(message)
 }
 
+export async function getCategories() {
+  return handle(await fetch('/api/categories'))
+}
+
 export async function getItems() {
   return handle(await fetch(BASE))
 }

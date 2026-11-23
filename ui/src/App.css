@@ -38,7 +38,8 @@ h1 { margin: 0 0 4px; font-size: 1.8rem; }
   padding: 16px; margin-bottom: 20px;
 }
 .add-form label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--muted); }
-.add-form input { padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+.add-form input,
+.add-form select { padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background: var(--card); }
 .add-form input[type="number"] { width: 70px; }
 .add-form button {
   padding: 9px 16px; border: none; border-radius: 6px; background: var(--accent);
@@ -61,6 +62,10 @@ h1 { margin: 0 0 4px; font-size: 1.8rem; }
 .item-name { font-weight: 600; }
 .qty { color: var(--muted); font-weight: 400; }
 .item-date { font-size: 0.85rem; color: var(--muted); }
+.category {
+  display: inline-block; padding: 1px 8px; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+}
 .days { font-weight: 600; color: var(--green); }
 .remove {
   border: 1px solid var(--border); background: transparent; border-radius: 6px;

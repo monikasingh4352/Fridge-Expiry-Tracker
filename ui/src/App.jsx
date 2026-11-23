@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getItems, addItem, deleteItem } from './api.js'
+import { getCategories, getItems, addItem, deleteItem } from './api.js'
 import AddItemForm from './components/AddItemForm.jsx'
 import ItemList from './components/ItemList.jsx'
 
 export default function App() {
   const [items, setItems] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -19,7 +20,12 @@ export default function App() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+    getCategories()
+      .then(setCategories)
+      .catch(e => setError(`Could not load categories. Is the API running? (${e.message})`))
+  }, [])
 
   async function handleAdd(item) {
     await addItem(item)   // errors are shown by the form
@@ -54,7 +60,7 @@ export default function App() {
         <span className="chip chip-fresh">{counts.fresh} fresh</span>
       </section>
 
-      <AddItemForm onAdd={handleAdd} />
+      <AddItemForm categories={categories} onAdd={handleAdd} />
 
       {error && <p className="error" role="alert">{error}</p>}
       {loading ? <p>Loading…</p> : <ItemList items={items} onDelete={handleDelete} />}

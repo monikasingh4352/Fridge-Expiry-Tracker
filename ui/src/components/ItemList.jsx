@@ -29,7 +29,9 @@ export default function ItemList({ items, onDelete }) {
             <span className="item-name">
               {item.name} {item.quantity > 1 && <span className="qty">×{item.quantity}</span>}
             </span>
-            <span className="item-date">{formatDate(item.expiryDate)}</span>
+            <span className="item-date">
+              <span className="category">{item.category}</span> · {formatDate(item.expiryDate)}
+            </span>
           </div>
           <span className="days">{describeDaysLeft(item.daysLeft)}</span>
           <button className="remove" onClick={() => onDelete(item.id)}
