@@ -1,0 +1,18 @@
+@FridgeApi_HostAddress = http://localhost:5080
+
+### List all items (soonest expiry first)
+GET {{FridgeApi_HostAddress}}/api/items
+Accept: application/json
+
+### Add an item
+POST {{FridgeApi_HostAddress}}/api/items
+Content-Type: application/json
+
+{
+  "name": "Milk",
+  "quantity": 1,
+  "expiryDate": "2026-11-22"
+}
+
+### Delete an item
+DELETE {{FridgeApi_HostAddress}}/api/items/1
