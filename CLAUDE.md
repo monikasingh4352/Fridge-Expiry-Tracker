@@ -41,8 +41,8 @@ The front end forwards every `/api` call to the back end on port 5080 (set in `u
 
 ```
 api/
-  Program.cs            endpoints: GET/POST /api/items, DELETE /api/items/{id}
-  Models/FoodItem.cs    entity, request/response records, validation, ExpiryRules
+  Program.cs            endpoints: GET/POST /api/items, DELETE /api/items/{id}, GET /api/categories
+  Models/FoodItem.cs    entity, request/response records, validation, Categories, ExpiryRules
   Data/FridgeDbContext.cs
   FridgeApi.http        sample requests
 ui/
@@ -60,7 +60,8 @@ start-local.bat         starts API + UI
   - `soon`: 0 to 3 days left (`SoonThresholdDays = 3`) (red)
   - `fresh`: more than 3 days left (green)
 - The API returns items sorted by expiry date (soonest first). The UI shows them in that order.
-- Validation (back end): name required (max 100 chars), expiry date required, quantity 1–999.
+- Validation (back end): name required (max 100 chars), expiry date required, quantity 1–999, category required and must be in the list.
+- Categories are a fixed list owned by the **back end** (`Categories` in `api/Models/FoodItem.cs`): Dairy, Vegetables, Fruit, Meat & Fish, Bakery, Drinks, Leftovers, Other. The UI loads them from `GET /api/categories`; do not hard-code the list in the UI. To add a category, change only `Categories.All`.
 
 ## Database changes
 

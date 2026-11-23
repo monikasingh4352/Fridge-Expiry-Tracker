@@ -1,8 +1,9 @@
 import { useState } from 'react'
 
-export default function AddItemForm({ onAdd }) {
+export default function AddItemForm({ categories, onAdd }) {
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [category, setCategory] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -12,9 +13,10 @@ export default function AddItemForm({ onAdd }) {
     setError('')
     setSaving(true)
     try {
-      await onAdd({ name, quantity: Number(quantity), expiryDate })
+      await onAdd({ name, quantity: Number(quantity), category, expiryDate })
       setName('')
       setQuantity(1)
+      setCategory('')
       setExpiryDate('')
     } catch (e) {
       setError(e.message)
@@ -34,6 +36,13 @@ export default function AddItemForm({ onAdd }) {
         Qty
         <input type="number" min="1" max="999" value={quantity}
                onChange={e => setQuantity(e.target.value)} required />
+      </label>
+      <label>
+        Category
+        <select value={category} onChange={e => setCategory(e.target.value)} required>
+          <option value="" disabled>Choose…</option>
+          {categories.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
       </label>
       <label>
         Expiry date

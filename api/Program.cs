@@ -19,6 +19,9 @@ using (var scope = app.Services.CreateScope())
 
 static DateOnly Today() => DateOnly.FromDateTime(DateTime.Today);
 
+// GET /api/categories: the list of categories the user can pick from.
+app.MapGet("/api/categories", () => Categories.All);
+
 var items = app.MapGroup("/api/items");
 
 // GET /api/items: all items, the ones that expire first at the top.
@@ -44,6 +47,7 @@ items.MapPost("/", async (CreateFoodItemRequest request, FridgeDbContext db) =>
     {
         Name = request.Name!.Trim(),
         Quantity = request.Quantity ?? 1,
+        Category = Categories.Match(request.Category)!,
         ExpiryDate = request.ExpiryDate!.Value,
         AddedOn = today
     };
