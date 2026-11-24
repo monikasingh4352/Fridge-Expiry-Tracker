@@ -18,6 +18,8 @@ public class FridgeDbContext(DbContextOptions<FridgeDbContext> options) : DbCont
 
         modelBuilder.Entity<User>(e =>
         {
+            e.Property(u => u.Name).HasMaxLength(UserRules.MaxNameLength).IsRequired();
+            e.Property(u => u.Phone).HasMaxLength(UserRules.MaxPhoneLength).IsRequired();
             e.Property(u => u.Email).HasMaxLength(256).IsRequired();
             e.HasIndex(u => u.Email).IsUnique();
             e.Property(u => u.PasswordHash).IsRequired();

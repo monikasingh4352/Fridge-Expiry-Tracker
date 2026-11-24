@@ -3,6 +3,8 @@ import { login, register } from '../api.js'
 
 export default function LoginPage({ onLoggedIn }) {
   const [mode, setMode] = useState('login')   // 'login' or 'register'
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -15,7 +17,9 @@ export default function LoginPage({ onLoggedIn }) {
     setError('')
     setSaving(true)
     try {
-      const user = isLogin ? await login(email, password) : await register(email, password)
+      const user = isLogin
+        ? await login(email, password)
+        : await register({ name, phone, email, password })
       onLoggedIn(user)
     } catch (e) {
       setError(e.message)
@@ -35,6 +39,20 @@ export default function LoginPage({ onLoggedIn }) {
         <h1>Fridge Expiry Tracker</h1>
         <p className="tagline">{isLogin ? 'Log in to see your fridge.' : 'Create an account to get started.'}</p>
 
+        {!isLogin && (
+          <>
+            <label>
+              Name
+              <input value={name} onChange={e => setName(e.target.value)}
+                     autoComplete="name" maxLength={100} required />
+            </label>
+            <label>
+              Phone number
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                     autoComplete="tel" placeholder="e.g. +91 98765 43210" maxLength={20} required />
+            </label>
+          </>
+        )}
         <label>
           Email
           <input type="email" value={email} onChange={e => setEmail(e.target.value)}

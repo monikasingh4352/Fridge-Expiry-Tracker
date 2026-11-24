@@ -35,8 +35,9 @@ export async function login(email, password) {
   return handle(await postJson('/api/auth/login', { email, password }))
 }
 
-export async function register(email, password) {
-  return handle(await postJson('/api/auth/register', { email, password }))
+// details = { name, phone, email, password }
+export async function register(details) {
+  return handle(await postJson('/api/auth/register', details))
 }
 
 export async function logout() {

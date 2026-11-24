@@ -53,6 +53,7 @@ static Task SignInAsync(HttpContext http, User user)
     var claims = new[]
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Name),
         new Claim(ClaimTypes.Email, user.Email)
     };
     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -62,7 +63,7 @@ static Task SignInAsync(HttpContext http, User user)
 var auth = app.MapGroup("/api/auth");
 
 // POST /api/auth/register: create an account and log in.
-auth.MapPost("/register", async (AuthRequest request, FridgeDbContext db, HttpContext http) =>
+auth.MapPost("/register", async (RegisterRequest request, FridgeDbContext db, HttpContext http) =>
 {
     var errors = request.Validate();
     if (errors.Count > 0)
@@ -76,6 +77,8 @@ auth.MapPost("/register", async (AuthRequest request, FridgeDbContext db, HttpCo
 
     var user = new User
     {
+        Name = request.Name!.Trim(),
+        Phone = request.Phone!.Trim(),
         Email = email,
         PasswordHash = PasswordHashing.Hash(request.Password!),
         CreatedOn = DateTime.UtcNow
@@ -84,11 +87,11 @@ auth.MapPost("/register", async (AuthRequest request, FridgeDbContext db, HttpCo
     await db.SaveChangesAsync();
 
     await SignInAsync(http, user);
-    return Results.Ok(new UserResponse(user.Email));
+    return Results.Ok(new UserResponse(user.Name, user.Email));
 });
 
 // POST /api/auth/login: check email and password, then log in.
-auth.MapPost("/login", async (AuthRequest request, FridgeDbContext db, HttpContext http) =>
+auth.MapPost("/login", async (LoginRequest request, FridgeDbContext db, HttpContext http) =>
 {
     var email = request.NormalizedEmail;
     var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -100,7 +103,7 @@ auth.MapPost("/login", async (AuthRequest request, FridgeDbContext db, HttpConte
             statusCode: StatusCodes.Status401Unauthorized);
 
     await SignInAsync(http, user);
-    return Results.Ok(new UserResponse(user.Email));
+    return Results.Ok(new UserResponse(user.Name, user.Email));
 });
 
 // POST /api/auth/logout: remove the login cookie.
@@ -111,7 +114,8 @@ auth.MapPost("/logout", async (HttpContext http) =>
 });
 
 // GET /api/auth/me: who is logged in (401 if nobody).
-auth.MapGet("/me", (ClaimsPrincipal user) => new UserResponse(user.FindFirstValue(ClaimTypes.Email)!))
+auth.MapGet("/me", (ClaimsPrincipal user) =>
+        new UserResponse(user.FindFirstValue(ClaimTypes.Name) ?? "", user.FindFirstValue(ClaimTypes.Email)!))
     .RequireAuthorization();
 
 // GET /api/categories: the list of categories the user can pick from.

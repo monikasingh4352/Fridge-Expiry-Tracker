@@ -5,6 +5,8 @@ POST {{FridgeApi_HostAddress}}/api/auth/register
 Content-Type: application/json
 
 {
+  "name": "Test User",
+  "phone": "+91 98765 43210",
   "email": "test@example.com",
   "password": "secret123"
 }
