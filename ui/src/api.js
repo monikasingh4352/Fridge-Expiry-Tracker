@@ -16,6 +16,33 @@ async function handle(response) {
   throw new Error(message)
 }
 
+function postJson(url, data) {
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+}
+
+// Returns { email } of the logged-in user, or null if nobody is logged in.
+export async function getMe() {
+  const response = await fetch('/api/auth/me')
+  if (response.status === 401) return null
+  return handle(response)
+}
+
+export async function login(email, password) {
+  return handle(await postJson('/api/auth/login', { email, password }))
+}
+
+export async function register(email, password) {
+  return handle(await postJson('/api/auth/register', { email, password }))
+}
+
+export async function logout() {
+  return handle(await fetch('/api/auth/logout', { method: 'POST' }))
+}
+
 export async function getCategories() {
   return handle(await fetch('/api/categories'))
 }
@@ -25,11 +52,7 @@ export async function getItems() {
 }
 
 export async function addItem(item) {
-  return handle(await fetch(BASE, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(item)
-  }))
+  return handle(await postJson(BASE, item))
 }
 
 export async function deleteItem(id) {
