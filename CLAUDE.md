@@ -43,7 +43,7 @@ The front end forwards every `/api` call to the back end on port 5080 (set in `u
 api/
   Program.cs            cookie login setup; endpoints: /api/auth/*, GET/POST /api/items, DELETE /api/items/{id}, GET /api/categories
   Models/FoodItem.cs    entity, request/response records, validation, Categories, ExpiryRules
-  Models/User.cs        User entity, AuthRequest validation, PasswordHashing (PBKDF2)
+  Models/User.cs        User entity, RegisterRequest/LoginRequest, UserRules validation, PasswordHashing (PBKDF2)
   Data/FridgeDbContext.cs
   FridgeApi.http        sample requests
 ui/
@@ -66,7 +66,8 @@ start-local.bat         starts API + UI
 
 ## Login
 
-- Users sign up and log in with email + password. Emails are stored trimmed and lower case; passwords are never stored, only a salted PBKDF2 hash (`PasswordHashing` in `api/Models/User.cs`). Password: 8–128 characters.
+- Sign-up asks for name (required, max 100), phone number (required; 7–15 digits, may contain +, spaces, dashes, brackets), email and password. Login asks only for email + password. Rules are in `UserRules` / `RegisterRequest` in `api/Models/User.cs`.
+- Emails are stored trimmed and lower case; passwords are never stored, only a salted PBKDF2 hash (`PasswordHashing` in `api/Models/User.cs`). Password: 8–128 characters.
 - After login the API sets an HttpOnly, SameSite=Strict cookie (`fridge.auth`, 8 hours, sliding). Built-in ASP.NET Core cookie authentication, no extra package.
 - Endpoints: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
 - `/api/items` and `/api/categories` require login (`RequireAuthorization()`); they return 401 when logged out. Any new endpoint with fridge data must also require login.

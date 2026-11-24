@@ -31,10 +31,10 @@ The UI calls `/api/items`. Vite forwards those calls to the API on port 5080.
 
 | Method | Endpoint | What it does |
 |--------|----------|--------------|
-| POST | `/api/auth/register` | Create an account `{ email, password }` and log in |
+| POST | `/api/auth/register` | Create an account `{ name, phone, email, password }` and log in |
 | POST | `/api/auth/login` | Log in `{ email, password }` (sets a login cookie) |
 | POST | `/api/auth/logout` | Log out |
-| GET | `/api/auth/me` | The logged-in user's `{ email }`, or 401 |
+| GET | `/api/auth/me` | The logged-in user's `{ name, email }`, or 401 |
 | GET | `/api/items` | List items, soonest expiry first, with `category`, `daysLeft` and `status` |
 | POST | `/api/items` | Add an item `{ name, quantity, category, expiryDate }` |
 | DELETE | `/api/items/{id}` | Remove an item |

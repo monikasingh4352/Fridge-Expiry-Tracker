@@ -50,7 +50,7 @@ export default function FridgePage({ user, onLogout }) {
   return (
     <main className="page">
       <div className="user-bar">
-        <span>Logged in as <strong>{user.email}</strong></span>
+        <span>Logged in as <strong>{user.name}</strong> ({user.email})</span>
         <button className="remove" onClick={onLogout}>Log out</button>
       </div>
 
