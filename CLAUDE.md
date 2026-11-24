@@ -41,14 +41,15 @@ The front end forwards every `/api` call to the back end on port 5080 (set in `u
 
 ```
 api/
-  Program.cs            endpoints: GET/POST /api/items, DELETE /api/items/{id}, GET /api/categories
+  Program.cs            cookie login setup; endpoints: /api/auth/*, GET/POST /api/items, DELETE /api/items/{id}, GET /api/categories
   Models/FoodItem.cs    entity, request/response records, validation, Categories, ExpiryRules
+  Models/User.cs        User entity, AuthRequest validation, PasswordHashing (PBKDF2)
   Data/FridgeDbContext.cs
   FridgeApi.http        sample requests
 ui/
   src/api.js            all fetch calls to the API
-  src/App.jsx           page: loads items, summary counts
-  src/components/       AddItemForm.jsx, ItemList.jsx
+  src/App.jsx           checks who is logged in; shows LoginPage or FridgePage
+  src/components/       LoginPage.jsx, FridgePage.jsx (items + summary counts), AddItemForm.jsx, ItemList.jsx
   src/App.css           styles (status colours)
 start-local.bat         starts API + UI
 ```
@@ -63,10 +64,19 @@ start-local.bat         starts API + UI
 - Validation (back end): name required (max 100 chars), expiry date required, quantity 1–999, category required and must be in the list.
 - Categories are a fixed list owned by the **back end** (`Categories` in `api/Models/FoodItem.cs`): Dairy, Vegetables, Fruit, Meat & Fish, Bakery, Drinks, Leftovers, Other. The UI loads them from `GET /api/categories`; do not hard-code the list in the UI. To add a category, change only `Categories.All`.
 
+## Login
+
+- Users sign up and log in with email + password. Emails are stored trimmed and lower case; passwords are never stored, only a salted PBKDF2 hash (`PasswordHashing` in `api/Models/User.cs`). Password: 8–128 characters.
+- After login the API sets an HttpOnly, SameSite=Strict cookie (`fridge.auth`, 8 hours, sliding). Built-in ASP.NET Core cookie authentication, no extra package.
+- Endpoints: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
+- `/api/items` and `/api/categories` require login (`RequireAuthorization()`); they return 401 when logged out. Any new endpoint with fridge data must also require login.
+- Wrong email and wrong password give the same message ("Email or password is wrong.") so nobody can find out which emails have accounts. Keep it that way.
+- Items are shared between all logged-in users (not per user).
+
 ## Database changes
 
 - The table is created with `EnsureCreated()` in `api/Program.cs`. This only creates the database if `api/fridge.db` does not exist yet. It **never updates** an existing table.
-- So if you change `FoodItem` (add, rename or remove a field), the existing `fridge.db` will not match the code and the API will fail when reading or saving items.
+- So if you change `FoodItem` or `User`, or add a table (add, rename or remove a field), the existing `fridge.db` will not match the code and the API will fail when reading or saving items.
 - To apply a model change locally: stop the API, delete `api/fridge.db`, then run `dotnet run` again. **This deletes all saved items.**
 - Before changing the model, tell the user that their local data will be lost. If the data must be kept, ask before switching to EF Core migrations (that adds a tool and a `Migrations/` folder).
 

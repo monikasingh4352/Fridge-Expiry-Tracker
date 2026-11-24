@@ -1,5 +1,29 @@
 @FridgeApi_HostAddress = http://localhost:5080
 
+### Create an account (also logs in). Run this or "Log in" first: the other requests need the login cookie.
+POST {{FridgeApi_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "secret123"
+}
+
+### Log in
+POST {{FridgeApi_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "secret123"
+}
+
+### Who is logged in
+GET {{FridgeApi_HostAddress}}/api/auth/me
+
+### Log out
+POST {{FridgeApi_HostAddress}}/api/auth/logout
+
 ### List all items (soonest expiry first)
 GET {{FridgeApi_HostAddress}}/api/items
 Accept: application/json
